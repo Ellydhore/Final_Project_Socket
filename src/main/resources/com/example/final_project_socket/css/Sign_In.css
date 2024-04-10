@@ -1,0 +1,30 @@
+.main-background {
+    -fx-background-image: url('../images/background_blur.png');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+.menu_background {
+    -fx-background-image: url('../images/menu_background.png');
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.text-background {
+    -fx-background-image: url('../images/text_background.png');
+    -fx-background-size: cover;
+}
+
+.button-background {
+    -fx-background-image: url('../images/button_background.png');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.transparent_button {
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+

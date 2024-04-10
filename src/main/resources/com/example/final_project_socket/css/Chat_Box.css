@@ -1,0 +1,20 @@
+.main-background {
+    -fx-background-image: url('../images/background_blur.png');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+.chat_background {
+    -fx-background-image: url('../images/chat_box_background.png');
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.button-background {
+    -fx-background-image: url('../images/button_background.png');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
