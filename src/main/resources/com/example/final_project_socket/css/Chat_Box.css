@@ -1,20 +1,40 @@
 .main-background {
-    -fx-background-image: url('../images/background_blur.png');
-    -fx-background-size: cover;
-    -fx-background-position: center;
+    -fx-background-color: linear-gradient(to bottom, rgb(112, 128, 144), rgb(0, 0, 0));
 }
 
-.chat_background {
-    -fx-background-image: url('../images/chat_box_background.png');
-    -fx-background-size: contain;
-    -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
-    -fx-background-color: rgba(0, 0, 0, 0);
+.background {
+    -fx-background-color: linear-gradient(to bottom, rgb(122, 138, 154), rgb(0, 0, 0));
+}
+
+.text-background {
+    -fx-background-color: rgb(0, 0, 0, 0);
+    -fx-border-color: rgb(169, 169, 169);
+    -fx-border-radius: 10 10 10 10;
+    -fx-border-width: 2px;
 }
 
 .button-background {
-    -fx-background-image: url('../images/button_background.png');
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-radius: 10 10 10 10;
+    -fx-background-radius: 10 10 10 10;
+}
+
+.button-transparent {
+    -fx-background-color: rgb(0, 0, 0, 0);
+}
+
+
+.background-effect1 {
+    -fx-background-image: url('../images/torn_effect.png');
+}
+
+.text-background {
+    -fx-border-radius: 10 10 10 10;
+    -fx-text-fill: rgb(255, 255, 255);
+    -fx-border-width: 2px;
+}
+
+.messages-background {
+    -fx-background-color: rgb(0, 0, 0, 0);
+    -fx-border-radius: 10 10 10 10;
+    -fx-border-width: 2px;
 }

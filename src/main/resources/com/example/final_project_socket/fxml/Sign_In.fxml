@@ -6,43 +6,45 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="main-background" stylesheets="@../css/Sign_In.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.final_project_socket.fxml_controller.SignInController">
-    <children>
-        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="800.0" prefWidth="400.0" />
-        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" styleClass="menu_background" stylesheets="@../css/Sign_Up.css">
-            <children>
-                <TextField fx:id="txtf_username" alignment="CENTER" layoutX="222.0" layoutY="252.0" prefHeight="54.0" prefWidth="357.0" promptText="User name" styleClass="text-background" stylesheets="@../css/Sign_In.css">
-                    <font>
-                        <Font name="System Bold" size="28.0" />
-                    </font></TextField>
-                <PasswordField fx:id="passf_password" alignment="CENTER" layoutX="222.0" layoutY="332.0" prefHeight="54.0" prefWidth="357.0" promptText="Password" styleClass="text-background" stylesheets="@../css/Sign_In.css">
-                    <font>
-                        <Font name="System Bold" size="28.0" />
-                    </font></PasswordField>
-                <ImageView fitHeight="150.0" fitWidth="576.0" layoutX="175.0" layoutY="82.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/sign_in.png" />
-                    </image>
-                </ImageView>
-                <Button fx:id="btn_connect" layoutX="327.0" layoutY="412.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="147.0" styleClass="button-background" stylesheets="@../css/Sign_Up.css" text="Connect" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold Italic" size="23.0" />
-                    </font>
-                </Button>
-                <Text fill="WHITE" layoutX="174.0" layoutY="608.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Don't have an account?" wrappingWidth="306.0">
-                    <font>
-                        <Font name="System Bold" size="23.0" />
-                    </font></Text>
-                <Button fx:id="btn_signup" alignment="CENTER" layoutX="480.0" layoutY="578.0" mnemonicParsing="false" styleClass="transparent_button" stylesheets="@../css/Sign_Up.css" text="Sign up" textFill="WHITE" underline="true">
-                    <font>
-                        <Font size="23.0" />
-                    </font>
-                </Button>
-            </children>
-        </AnchorPane>
-    </children>
-</HBox>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="800.0" prefWidth="600.0" styleClass="main-background" stylesheets="@../css/Sign_Up.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.final_project_socket.fxml_controller.SignInController">
+   <children>
+      <ImageView fitHeight="100.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/torn_effect.png" />
+         </image>
+      </ImageView>
+      <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="SIGN IN" textAlignment="CENTER" wrappingWidth="400.0" x="100.0" y="350.0">
+         <font>
+            <Font name="System Bold" size="80.0" />
+         </font>
+      </Text>
+      <TextField fx:id="txtf_username" alignment="CENTER" layoutX="100.0" layoutY="390.0" prefHeight="50.0" prefWidth="400.0" promptText="User name" styleClass="text-background" stylesheets="@../css/Sign_Up.css">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </TextField>
+      <PasswordField fx:id="passf_password" alignment="CENTER" layoutX="100.0" layoutY="460.0" prefHeight="50.0" prefWidth="400.0" promptText="Password" styleClass="text-background" stylesheets="@../css/Sign_Up.css">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </PasswordField>
+      <Button fx:id="btn_submit" layoutX="100.0" layoutY="530.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="400.0" styleClass="button-background" stylesheets="@../css/Sign_Up.css" text="SUBMIT">
+         <font>
+            <Font name="System Bold Italic" size="26.0" />
+         </font>
+      </Button>
+      <Text fill="WHITE" layoutX="80.0" layoutY="750.0" strokeWidth="0.0" text="Don't have an account?" textAlignment="RIGHT" wrappingWidth="300.0">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Text>
+      <Button fx:id="btn_signup" alignment="CENTER" layoutX="390.0" layoutY="716.0" mnemonicParsing="false" prefHeight="50.0" styleClass="button-transparent" stylesheets="@../css/Sign_Up.css" text="Sign up" textFill="WHITE" underline="true">
+         <font>
+            <Font name="System Bold" size="25.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
