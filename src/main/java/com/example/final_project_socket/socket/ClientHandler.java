@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class ClientHandler implements Runnable {
     // Using a thread safe array list
-    public static CopyOnWriteArrayList<com.example.final_project_socket.socket.ClientHandler> clientHandlers = new CopyOnWriteArrayList<>();
+    private static CopyOnWriteArrayList<com.example.final_project_socket.socket.ClientHandler> clientHandlers = new CopyOnWriteArrayList<>();
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
@@ -24,7 +24,10 @@ public class ClientHandler implements Runnable {
             this.clientUsername = bufferedReader.readLine();
             clientHandlers.add(this);
 
-            broadcastMessage("Server: " + clientUsername + " has entered the chat!");
+            for (com.example.final_project_socket.socket.ClientHandler clientHandler : clientHandlers) {
+                System.out.println(clientHandler.clientUsername);
+            }
+            broadcastMessage("[Server] " + clientUsername + " has entered the chat!");
         } catch (IOException e) {
             closeEverything();
         }
@@ -35,21 +38,20 @@ public class ClientHandler implements Runnable {
         String messageFromClient;
         try {
             // Listens for incoming messages.
-            while ((messageFromClient = bufferedReader.readLine()) != null && !socket.isClosed()) {
-                if(messageFromClient.equals("--DISCONNECTED--")) {
-                    closeEverything();
-                    break;
-                }
+            while ((messageFromClient = bufferedReader.readLine()) != null && !socket.isClosed() && !messageFromClient.equals("--DISCONNECTED--")) {
                 broadcastMessage(messageFromClient);
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            broadcastMessage("[Server] " + clientUsername + " has left the chat!");
             closeEverything();
         }
     }
 
     public void broadcastMessage(String messageToSend) {
         for (com.example.final_project_socket.socket.ClientHandler clientHandler : clientHandlers) {
-            if (!clientHandler.equals(this)) {
+            if (!clientHandler.equals(this) && !socket.isClosed()) {
                 try {
                     clientHandler.bufferedWriter.write(messageToSend);
                     clientHandler.bufferedWriter.newLine();
@@ -66,7 +68,6 @@ public class ClientHandler implements Runnable {
     }
 
     public void closeEverything() {
-        removeClientHandler();
         try {
             if(bufferedReader != null) {
                 bufferedReader.close();
@@ -77,7 +78,7 @@ public class ClientHandler implements Runnable {
             if(socket != null && !socket.isClosed()) {
                 socket.close();
             }
-            broadcastMessage("Server: " + clientUsername + " has left the chat!");
+            removeClientHandler();
         } catch(IOException e) {
             e.printStackTrace();
         }
