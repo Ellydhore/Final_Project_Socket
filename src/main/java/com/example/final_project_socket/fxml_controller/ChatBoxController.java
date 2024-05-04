@@ -4,8 +4,8 @@ import com.example.final_project_socket.socket.Client;
 import com.example.final_project_socket.utility.MySQLConnector;
 import com.example.final_project_socket.utility.SceneUtil;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
@@ -24,17 +25,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-
-/*
-    #########################################################################################################
-
-    This class needs the Client class.
-
-    NOTE!
-    -The server is implemented on a separate project.
-
-    #########################################################################################################
-*/
 
 public class ChatBoxController implements Initializable {
 
@@ -56,6 +46,9 @@ public class ChatBoxController implements Initializable {
             // runLater() ensures that txt_name.getText() retrieves the value from the FXML.
             // (See link: https://stackoverflow.com/questions/68363535/passing-data-to-another-controller-in-javafx).
             Platform.runLater(() -> {
+                Parent root = btn_disconnect.getParent();
+                Stage stage = (Stage) root.getScene().getWindow();
+
                 Client client = new Client(socket, txt_name.getText());
                 client.listenForMessage(vb_messages);
 
@@ -85,25 +78,15 @@ public class ChatBoxController implements Initializable {
                 });
 
                 btn_disconnect.setOnAction(actionEvent -> {
-                    try (Connection connection = MySQLConnector.getConnection();
-                         PreparedStatement statement = connection.prepareStatement("UPDATE tblusers SET is_online = ? WHERE username = ?")) {
-                        statement.setBoolean(1, false);
-                        statement.setString(2, txt_name.getText());
-                        int rowsUpdated = statement.executeUpdate();
-                        if (rowsUpdated > 0) {
-                            System.out.println("User disconnected successfully.");
-                        } else {
-                            System.out.println("User not found or already disconnected.");
-                        }
-                        client.sendMessage("--DISCONNECTED--");
-                        socket.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } finally {
-                        SceneUtil.changeScene(actionEvent, "/com/example/final_project_socket/fxml/Sign_In.fxml", "Log in", null);
-                    }
+                    disconnect(client, socket);
+                    SceneUtil.changeScene(actionEvent, "/com/example/final_project_socket/fxml/Sign_In.fxml", "Log in", null);
+                });
+
+
+                stage.setOnCloseRequest(actionEvent -> {
+                    disconnect(client, socket);
+                    actionEvent.consume();
+                    stage.close();
                 });
             });
 
@@ -134,5 +117,26 @@ public class ChatBoxController implements Initializable {
 
     public void setUserInformation(String username) {
         txt_name.setText(username);
+    }
+
+    private void disconnect(Client client, Socket socket) {
+        try (Connection connection = MySQLConnector.getConnection();
+             PreparedStatement statement = connection.prepareStatement("UPDATE tblusers SET is_online = ? WHERE username = ?")) {
+            statement.setBoolean(1, false);
+            statement.setString(2, txt_name.getText());
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("User disconnected successfully.");
+            } else {
+                System.out.println("User not found or already disconnected.");
+            }
+            // Using '--DISCONNECTED--' as a sentinel value informs the server that the client has disconnected.
+            client.sendMessage("--DISCONNECTED--");
+            socket.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

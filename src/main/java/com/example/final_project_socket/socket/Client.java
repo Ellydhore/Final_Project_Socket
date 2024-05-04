@@ -44,7 +44,7 @@ public class Client {
 
     public void sendMessage(String messageToSend) {
         try {
-            if(socket.isConnected()) {
+            if(socket.isConnected() && !messageToSend.equals("--DISCONNECTED--")) {
                 bufferedWriter.write(username + ": " + messageToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
@@ -59,11 +59,6 @@ public class Client {
             while(socket.isConnected()) {
                 try {
                     String msgFromGroupChat = bufferedReader.readLine();
-                    // Using '--DISCONNECTED--' as a sentinel value informs the server that the client has disconnected.
-                    if(msgFromGroupChat.equals("--DISCONNECTED--")) {
-                        bufferedWriter.write(msgFromGroupChat);
-                        break;
-                    }
                     ChatBoxController.addLabel(msgFromGroupChat, vBox);
                 } catch (IOException e) {
                     System.out.println("Something went wrong with the message receiver!");
