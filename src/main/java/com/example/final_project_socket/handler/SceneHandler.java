@@ -1,4 +1,4 @@
-package com.example.final_project_socket.utility;
+package com.example.final_project_socket.handler;
 
 import com.example.final_project_socket.fxml_controller.ChatBoxController;
 import javafx.event.ActionEvent;
@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.net.Socket;
 
 /*
     #########################################################################################################
@@ -18,17 +19,18 @@ import java.io.IOException;
     #########################################################################################################
 */
 
-public class SceneUtil {
-    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username) {
+public class SceneHandler {
+    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username, Socket socket) {
         Parent root = null;
 
         try {
-            FXMLLoader loader = new FXMLLoader(DBUtil.class.getResource(fxmlFile));
+            FXMLLoader loader = new FXMLLoader(AuthenticationHandler.class.getResource(fxmlFile));
             root = loader.load();
 
             if (username != null) {
                 ChatBoxController chatBoxController = loader.getController();
                 chatBoxController.setUserInformation(username);
+                chatBoxController.setSocket(socket);
             }
 
         } catch (IOException e) {

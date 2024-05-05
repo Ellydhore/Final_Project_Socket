@@ -1,10 +1,9 @@
 package com.example.final_project_socket.fxml_controller;
 
 import com.example.final_project_socket.socket.Client;
-import com.example.final_project_socket.utility.MySQLConnector;
-import com.example.final_project_socket.utility.SceneUtil;
+import com.example.final_project_socket.database.MySQLConnector;
+import com.example.final_project_socket.handler.SceneHandler;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -17,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
@@ -38,64 +36,73 @@ public class ChatBoxController implements Initializable {
     private VBox vb_messages;
     @FXML
     private TextField txtf_sendmsgbox;
-
+    private Socket socket;
+    private Client client;
+    private boolean disconnected;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            Socket socket = new Socket("localhost", 9806);
-            // runLater() ensures that txt_name.getText() retrieves the value from the FXML.
-            // (See link: https://stackoverflow.com/questions/68363535/passing-data-to-another-controller-in-javafx).
-            Platform.runLater(() -> {
-                Parent root = btn_disconnect.getParent();
-                Stage stage = (Stage) root.getScene().getWindow();
+        disconnected = false;
+        // runLater() ensures that txt_name.getText() retrieves the value from the FXML.
+        // (See link: https://stackoverflow.com/questions/68363535/passing-data-to-another-controller-in-javafx).
+        Platform.runLater(() -> {
+            Parent root = btn_disconnect.getParent();
+            Stage stage = (Stage) root.getScene().getWindow();
 
-                Client client = new Client(socket, txt_name.getText());
-                client.listenForMessage(vb_messages);
+            client = new Client(socket, txt_name.getText());
+            client.listenForMessage(vb_messages);
+            btn_send.setOnAction(actionEvent -> {
+                String messageToSend = txtf_sendmsgbox.getText();
+                // This code wraps any sent messages in a nice bubble.
+                if (!messageToSend.isEmpty()) {
+                    HBox hBox = new HBox();
+                    hBox.setAlignment(Pos.CENTER_RIGHT);
+                    hBox.setPadding(new Insets(5, 10, 5, 150));
 
-                btn_send.setOnAction(actionEvent -> {
-                    String messageToSend = txtf_sendmsgbox.getText();
-                    // This code wraps any sent messages in a nice bubble.
-                    if (!messageToSend.isEmpty()) {
-                        HBox hBox = new HBox();
-                        hBox.setAlignment(Pos.CENTER_RIGHT);
-                        hBox.setPadding(new Insets(5, 10, 5, 150));
+                    Text text = new Text(messageToSend);
 
-                        Text text = new Text(messageToSend);
+                    TextFlow textFlow = new TextFlow(text);
+                    textFlow.setStyle("-fx-color: rgb(239, 242, 255);" +
+                            "-fx-background-color: rgb(3, 172, 19);" +
+                            "-fx-background-radius: 20px;" +
+                            "-fx-font-size: 20px");
+                    textFlow.setPadding(new Insets(5, 10, 5, 10));
+                    text.setFill(Color.color(0.934, 0.945, 0.996));
+                    hBox.getChildren().add(textFlow);
+                    vb_messages.getChildren().add(hBox);
 
-                        TextFlow textFlow = new TextFlow(text);
-                        textFlow.setStyle("-fx-color: rgb(239, 242, 255);" +
-                                "-fx-background-color: rgb(3, 172, 19);" +
-                                "-fx-background-radius: 20px;" +
-                                "-fx-font-size: 20px");
-                        textFlow.setPadding(new Insets(5, 10, 5, 10));
-                        text.setFill(Color.color(0.934, 0.945, 0.996));
-                        hBox.getChildren().add(textFlow);
-                        vb_messages.getChildren().add(hBox);
-
-                        client.sendMessage(messageToSend);
-                        txtf_sendmsgbox.clear();
-                    }
-                });
-
-                btn_disconnect.setOnAction(actionEvent -> {
-                    disconnect(client, socket);
-                    SceneUtil.changeScene(actionEvent, "/com/example/final_project_socket/fxml/Sign_In.fxml", "Log in", null);
-                });
-
-
-                stage.setOnCloseRequest(actionEvent -> {
-                    disconnect(client, socket);
-                    actionEvent.consume();
-                    stage.close();
-                });
+                    client.sendMessage(messageToSend);
+                    txtf_sendmsgbox.clear();
+                }
             });
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            stage.setOnCloseRequest(actionEvent -> {
+                if (disconnect(client, socket) && !disconnected) {
+                    System.out.println("User disconnected [Exit Condition 2]");
+                    disconnected = true;
+                }
+                stage.close();
+            });
+
+            // This is a temporary solution
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (disconnect(client, socket) && !disconnected) {
+                    System.out.println("User disconnected [Exit Condition 3]");
+                    disconnected = true;
+                }
+            }));
+        });
         // This code dynamically changes the size of the message box
         vb_messages.heightProperty().addListener(
                 (observableValue, oldValue, newValue) -> sp_main.setVvalue((Double) newValue));
+
+        btn_disconnect.setOnAction(actionEvent -> {
+            if (disconnect(client, socket) && !disconnected) {
+                System.out.println("User disconnected successfully! [Exit Condition 1]");
+                txt_name.setText("");
+                disconnected = true;
+            }
+            SceneHandler.changeScene(actionEvent, "/com/example/final_project_socket/fxml/Sign_In.fxml", "Log in", null, null);
+        });
     }
 
     // This method wraps any received messages in a nice bubble.
@@ -119,24 +126,28 @@ public class ChatBoxController implements Initializable {
         txt_name.setText(username);
     }
 
-    private void disconnect(Client client, Socket socket) {
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    private boolean disconnect(Client client, Socket socket) {
         try (Connection connection = MySQLConnector.getConnection();
              PreparedStatement statement = connection.prepareStatement("UPDATE tblusers SET is_online = ? WHERE username = ?")) {
             statement.setBoolean(1, false);
             statement.setString(2, txt_name.getText());
             int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("User disconnected successfully.");
-            } else {
-                System.out.println("User not found or already disconnected.");
-            }
             // Using '--DISCONNECTED--' as a sentinel value informs the server that the client has disconnected.
             client.sendMessage("--DISCONNECTED--");
             socket.close();
+            if (rowsUpdated > 0) {
+                return true;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return false;
     }
 }

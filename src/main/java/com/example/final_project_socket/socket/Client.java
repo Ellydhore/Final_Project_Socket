@@ -8,9 +8,10 @@ import javafx.scene.layout.VBox;
 /*
     #########################################################################################################
 
-    This class is an extension of the ChatBoxController class, located in the ChatBoxController.java
-    file at src/main/java/com/example/final_project_socket/fxml_controller/, and it handles the
-    connection to the server and sends data to be processed.
+    This class is used by the ChatBoxController, and it handles the connection to the server and
+    sends data to be processed.
+
+    Using '--DISCONNECTED--' as a sentinel value informs the server that the client has disconnected.
 
     NOTE!
     -The Server and ClientHandler may be implemented to another project.
@@ -31,8 +32,7 @@ public class Client {
             this.username = username;
 
             // After the username has been initialized, it must be written to the server right away
-            // because the username is the key to informing the ClientHandler that the FIRST message
-            // sent SHOULD be a username.
+            // because the ClientHandler requires a username as its first message.
             // (See link: https://youtu.be/gLfuZrrfKes?t=911).
             bufferedWriter.write(username);
             bufferedWriter.newLine();
@@ -61,7 +61,6 @@ public class Client {
                     String msgFromGroupChat = bufferedReader.readLine();
                     ChatBoxController.addLabel(msgFromGroupChat, vBox);
                 } catch (IOException e) {
-                    System.out.println("Something went wrong with the message receiver!");
                     closeEverything();
                     break;
                 }
@@ -80,6 +79,7 @@ public class Client {
             if(socket != null) {
                 socket.close();
             }
+            System.out.println("Client closed successfully");
         } catch (IOException e) {
             e.printStackTrace();
         }

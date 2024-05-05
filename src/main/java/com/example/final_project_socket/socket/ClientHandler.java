@@ -17,16 +17,16 @@ public class ClientHandler implements Runnable {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            // After the username has been initialized, it must be written to the server right away
-            // because the username is the key to informing the ClientHandler that the FIRST message
-            // sent SHOULD be a username.
+            // After initializing the username, it must be sent to the server right away because it serves
+            // as the key for adding the client to the list, allowing it to send and receive messages.
             // (See link: https://youtu.be/gLfuZrrfKes?t=911).
             this.clientUsername = bufferedReader.readLine();
             clientHandlers.add(this);
-
+            System.out.print("\n[Clients online: ");
             for (com.example.final_project_socket.socket.ClientHandler clientHandler : clientHandlers) {
-                System.out.println(clientHandler.clientUsername);
+                System.out.print(clientHandler.clientUsername + ", ");
             }
+            System.out.println("]");
             broadcastMessage("[Server] " + clientUsername + " has entered the chat!");
         } catch (IOException e) {
             closeEverything();
@@ -50,6 +50,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void broadcastMessage(String messageToSend) {
+        System.out.println(messageToSend);
         for (com.example.final_project_socket.socket.ClientHandler clientHandler : clientHandlers) {
             if (!clientHandler.equals(this) && !socket.isClosed()) {
                 try {
