@@ -1,4 +1,4 @@
-package com.example.final_project_socket.utility;
+package com.example.final_project_socket.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

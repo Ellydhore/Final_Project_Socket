@@ -1,5 +1,5 @@
 [JDK 21]
-This project is all about the implementation of Sign-In, Log-In and, Chat system.
+This project focuses on implementing a sign-up, sign-in, and chat system.
 
   *-_-_-_-_-_ RUN XAMPP and Server class before running this program! -_-_-_-_-_*
 
@@ -11,9 +11,10 @@ final_project_socket/
     >main/
       >java/
         >com.example.final_project_socket/    <--(Everything in this package)
+          >database/
           >fxml_controller/
+          >handler/
           >socket/
-          >utility/
           >Main
           >readme.txt
         >module-info.java   <--(info)
@@ -30,7 +31,7 @@ final_project_socket/
 [1] Make sure to properly export the fxml_controller package inside
  module-info found in src/main/java/module-info.java
 
-[2] The SceneUtil class manages the switching of scenes between the Sign-Up, Sign-In,
+[2] The SceneHandler class manages the switching of scenes between the Sign-Up, Sign-In,
  and Chat-Box FXML files.
 
 -------------------------------------------------------------------------------------
@@ -40,14 +41,16 @@ final_project_socket/
  the following dependency in your pom.xml file.
  (See link: https://mvnrepository.com/artifact/com.mysql/mysql-connector-java/8.0.0).
 
-Make sure to require and import sql class properly
+ Make sure to require and import sql class properly
 
-[2] Database Schema (Update this info for every system or database!)
- Create a new database and name it 'dbyapper'.
- Create a table called 'tblusers' with 4 attributes accountID (INT)(PK), username (VARCHAR)
- password (VARCHAR) and, is_online (BOOL)(DEFAULT VALUE FALSE).
+[2] To configure MySQL entries, including the database root and password,
+ refer to the MySQLConnect class.
 
-[3] SQL entries in case you want to configure DB root and password. Check MySQLConnect class.
+[3] Database Schema (Update this info for every system or database!)
+ Create a new database named 'dbyapper' or configure it in the MySQLConnector class.
+ If you do not have a copy of the database, uncomment the code in the Main class that
+ creates the necessary tables.
+
 
 -------------------------------------------------------------------------------------
 !! Socket !!
