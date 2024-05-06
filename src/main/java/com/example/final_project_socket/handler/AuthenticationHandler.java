@@ -55,11 +55,11 @@ public class AuthenticationHandler {
 
                 String retrievedPassword = resultSet.getString("password");
                 int userId = resultSet.getInt("userid");
-
                 if (resultSet.getBoolean("is_online")) {
                     alert.error("Failed to sign in", "User is already signed in!");
                     return;
                 }
+
                 Socket socket = new Socket("localhost", 9806);
                 if (retrievedPassword.equals(password)) {
                     try (PreparedStatement statement = connection.prepareStatement("UPDATE tblusers SET is_online = ? WHERE userid = ?")) {

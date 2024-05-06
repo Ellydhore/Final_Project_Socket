@@ -1,5 +1,6 @@
 package com.example.final_project_socket;
 
+import com.example.final_project_socket.database.CreateTable;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -28,6 +29,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        //CreateTable.createTable();
         launch();
     }
 

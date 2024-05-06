@@ -2,6 +2,12 @@ package com.example.final_project_socket.socket;
 
 import java.io.*;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.example.final_project_socket.database.MySQLConnector;
 import com.example.final_project_socket.fxml_controller.ChatBoxController;
 import javafx.scene.layout.VBox;
 
@@ -42,9 +48,36 @@ public class Client {
         }
     }
 
+    private void saveMessage(int userId, String message) {
+        try (Connection connection = MySQLConnector.getConnection();
+             PreparedStatement ps = connection.prepareStatement("INSERT INTO tblmessages (userid, message) VALUES (?, ?)")) {
+            ps.setInt(1, userId);
+            ps.setString(2, message);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listenForMessage(VBox vBox) {
+        new Thread(() -> {
+            while(socket.isConnected()) {
+                try {
+                    String msgFromGroupChat = bufferedReader.readLine();
+                    ChatBoxController.addReceivedMessage(msgFromGroupChat, vBox);
+                } catch (IOException e) {
+                    closeEverything();
+                    break;
+                }
+            }
+        }).start();
+    }
+
     public void sendMessage(String messageToSend) {
         try {
             if(socket.isConnected() && !messageToSend.equals("--DISCONNECTED--")) {
+                int userId = getUserIdByUsername(username);
+                saveMessage(userId, messageToSend);
                 bufferedWriter.write(username + ": " + messageToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
@@ -54,18 +87,20 @@ public class Client {
         }
     }
 
-    public void listenForMessage(VBox vBox) {
-        new Thread(() -> {
-            while(socket.isConnected()) {
-                try {
-                    String msgFromGroupChat = bufferedReader.readLine();
-                    ChatBoxController.addLabel(msgFromGroupChat, vBox);
-                } catch (IOException e) {
-                    closeEverything();
-                    break;
+    private int getUserIdByUsername(String username) {
+        int userId = -1;
+        try (Connection connection = MySQLConnector.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT userid FROM tblusers WHERE username = ?")) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("userid");
                 }
             }
-        }).start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userId;
     }
 
     public void closeEverything() {
