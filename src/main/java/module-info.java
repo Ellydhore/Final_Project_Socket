@@ -11,4 +11,5 @@ module com.example.final_project_socket {
 
     // Additional Exports
     exports com.example.final_project_socket.fxml_controller to javafx.fxml;
+    exports com.example.final_project_socket.socket to javafx.fxml;
 }

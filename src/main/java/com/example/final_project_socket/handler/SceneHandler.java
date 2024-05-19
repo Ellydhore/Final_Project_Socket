@@ -1,6 +1,9 @@
 package com.example.final_project_socket.handler;
 
 import com.example.final_project_socket.fxml_controller.ChatBoxController;
+import com.example.final_project_socket.fxml_controller.HomeController;
+import com.example.final_project_socket.fxml_controller.ProfileController;
+import com.example.final_project_socket.socket.Client;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,19 +23,27 @@ import java.net.Socket;
 */
 
 public class SceneHandler {
-    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username, Socket socket) {
+    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username, Socket socket, Client client) {
         Parent root = null;
-
         try {
             FXMLLoader loader = new FXMLLoader(AuthenticationHandler.class.getResource(fxmlFile));
             root = loader.load();
-
             if (username != null) {
-                ChatBoxController chatBoxController = loader.getController();
-                chatBoxController.setUserInformation(username);
-                chatBoxController.setSocket(socket);
+                switch (fxmlFile) {
+                    case "/com/example/final_project_socket/fxml/Chat_Box.fxml" -> {
+                        ChatBoxController chatBoxController = loader.getController();
+                        chatBoxController.setUserInformation(username, socket, client);
+                    }
+                    case "/com/example/final_project_socket/fxml/Profile.fxml" -> {
+                        ProfileController profileController = loader.getController();
+                        profileController.setUserInformation(username, socket, client);
+                    }
+                    case "/com/example/final_project_socket/fxml/Home.fxml" -> {
+                        HomeController homeController = loader.getController();
+                        homeController.setUserInformation(username, socket, client);
+                    }
+                }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -44,5 +55,4 @@ public class SceneHandler {
             stage.show();
         }
     }
-
 }

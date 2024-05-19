@@ -38,6 +38,6 @@ public class SignUpController implements Initializable {
             }
         });
 
-        btn_signin.setOnAction(event -> SceneHandler.changeScene(event, "/com/example/final_project_socket/fxml/Sign_In.fxml", "Sign In!", null, null));
+        btn_signin.setOnAction(event -> SceneHandler.changeScene(event, "/com/example/final_project_socket/fxml/Sign_In.fxml", "Sign In!", null, null, null));
     }
 }
